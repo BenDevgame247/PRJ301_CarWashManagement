@@ -29,7 +29,7 @@ CREATE TABLE Vehicles(
 	vehicle_id		INT IDENTITY(1,1)	PRIMARY KEY,
 	customer_id		INT			NOT NULL,
 	plate_number            VARCHAR(20)		NOT NULL UNIQUE,
-	branch			NVARCHAR(50),
+	brand			NVARCHAR(50),
 	model			NVARCHAR(50),
 	color			NVARCHAR(30),
 	status			VARCHAR(20)		NOT NULL DEFAULT 'ACTIVE',
