@@ -6,7 +6,11 @@ package controller;
 
 import dao.UserDAO;
 import dto.UserDTO;
+import dto.LoginDTO;
+import utils.LoginValidator;
+
 import java.io.IOException;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -34,17 +38,22 @@ public class LoginServlet extends HttpServlet {
         String email = request.getParameter("email");
         String password = request.getParameter("password");
 
-        if (email == null || email.trim().isEmpty()
-                || password == null || password.trim().isEmpty()) {
-            request.setAttribute("error", "Email and password are required.");
+        LoginDTO loginDTO = new LoginDTO(email, password);
+        LoginValidator validator = new LoginValidator();
+        String error = validator.validate(loginDTO);
+
+        if (error != null) {
+            request.setAttribute("error", error);
+            request.setAttribute("login", loginDTO);
             request.getRequestDispatcher("/login.jsp").forward(request, response);
             return;
         }
-
+ 
         UserDTO user = userDAO.login(email.trim(), password.trim());
 
         if (user == null) {
             request.setAttribute("error", "Invalid email or password.");
+            request.setAttribute("login", loginDTO);
             request.getRequestDispatcher("/login.jsp").forward(request, response);
             return;
         }
