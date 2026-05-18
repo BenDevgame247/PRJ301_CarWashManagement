@@ -38,22 +38,6 @@ public class RegisterValidator {
             return "Phone must contain 9 to 11 digits.";
         }
         
-        if (isBlank(registerDTO.getPlateNumber())) {
-            return "Plate number of vehicle is required.";
-        }
-        
-        if (isBlank(registerDTO.getBrand())) {
-            return "Brand is required.";
-        }
-        
-        if (isBlank(registerDTO.getModel())) {
-            return "Model is required.";
-        }
-        
-        if (isBlank(registerDTO.getColor())) {
-            return "Color is required.";
-        }
-        
         return null;
     }
     

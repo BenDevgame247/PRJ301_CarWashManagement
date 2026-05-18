@@ -34,30 +34,6 @@ public class RegisterDAO {
         return false;
     }
     
-    // Check plate number exist or not connect db
-    public boolean isPlateNumberExist(String plateNumber) {
-        String sql = "SELECT COUNT(*) FROM dbo.Vehicles WHERE plate_number = ?";
-        
-        if (plateNumber == null || plateNumber.trim().isEmpty()) {
-            return false;
-        }
-        
-        try (Connection conn = new DBContext().getConnection();
-                PreparedStatement ps = conn.prepareStatement(sql)){
-            
-           ps.setString(1, plateNumber.trim());
-           
-           try (ResultSet rs = ps.executeQuery()) {
-               if (rs.next()) {
-                   return rs.getInt(1) > 0;
-               }
-           }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-    
     public boolean registerCustomer(RegisterDTO dto) {
         int memberTierId = 0;
         int userId = 0;
@@ -76,11 +52,6 @@ public class RegisterDAO {
                 + "(user_id, total_spent, total_washes) "
                 + "OUTPUT INSERTED.customer_id "
                 + "VALUES (?, 0, 0)";
-        
-        String insertVehicleSql = 
-                "INSERT INTO dbo.Vehicles "
-                + "(customer_id, plate_number, brand, model, color, status) "
-                + "VALUES (?, ?, ?, ?, ?, 'ACTIVE')";
         
         String insertLoyaltySql = 
                 "INSERT INTO dbo.LoyaltyAccounts " 
@@ -130,19 +101,6 @@ public class RegisterDAO {
                     }
                 }
                 
-                // Vehicle
-                try (PreparedStatement ps = conn.prepareStatement(insertVehicleSql)) {
-                    ps.setInt(1, customerId);
-                    ps.setString(2, dto.getPlateNumber().trim());
-                    ps.setString(3, dto.getBrand().trim());
-                    ps.setString(4, dto.getModel().trim());
-                    ps.setString(5, dto.getColor().trim());
-
-                    int rows = ps.executeUpdate();
-                    
-                    if (rows == 0) { throw new Exception("Cannot create vehicle."); }
-                }
-                
                 // Loyal Account create
                 try (PreparedStatement ps = conn.prepareStatement(insertLoyaltySql)) {
                     ps.setInt(1, customerId);
@@ -160,8 +118,6 @@ public class RegisterDAO {
                 e.printStackTrace();
                 return false;
             }
-            
-            
         } catch(Exception e) {
             e.printStackTrace();
             return false;

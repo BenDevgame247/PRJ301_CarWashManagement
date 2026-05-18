@@ -29,20 +29,12 @@ public class RegisterServlet extends HttpServlet {
         String email = request.getParameter("email");
         String password = request.getParameter("password");
         String phone = request.getParameter("phone");
-        String plateNumber = request.getParameter("plateNumber");
-        String brand = request.getParameter("brand");
-        String model = request.getParameter("model");
-        String color = request.getParameter("color");
         
         RegisterDTO registerDTO = new RegisterDTO(
                 fullName,
                 email,
                 password,
-                phone,
-                plateNumber,
-                brand,
-                model,
-                color
+                phone
         );
         
         RegisterValidator validator = new RegisterValidator();
@@ -57,13 +49,6 @@ public class RegisterServlet extends HttpServlet {
         
         if (registerDAO.isEmailExist(email)) {
             request.setAttribute("error", "Email already exists.");
-            request.setAttribute("register", registerDTO);
-            request.getRequestDispatcher("/register.jsp").forward(request, response);
-            return;
-        }
-        
-        if (registerDAO.isPlateNumberExist(plateNumber)) {
-            request.setAttribute("error", "Plate number already exists.");
             request.setAttribute("register", registerDTO);
             request.getRequestDispatcher("/register.jsp").forward(request, response);
             return;
