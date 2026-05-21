@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>AutoWash Pro – Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c12;
+    --surface: #111520;
+    --card: #161b28;
+    --border: #1e2535;
+    --accent: #00c8ff;
+    --accent2: #0077ff;
+    --gold: #f5a623;
+    --text: #e8eaf0;
+    --muted: #5a6180;
+    --error: #ff4d6d;
+    --success: #00e5a0;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh; max-width: 430px; margin: 0 auto;
+    overflow-x: hidden; padding-bottom: 90px;
+  }
+
+  .bg-glow {
+    position:fixed; top:0; left:50%; transform:translateX(-50%);
+    width:430px; height:100%; pointer-events:none; z-index:0;
+    background:
+      radial-gradient(ellipse 70% 35% at 80% 5%, rgba(0,200,255,0.07) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 10% 60%, rgba(0,119,255,0.05) 0%, transparent 60%);
+  }
+
+  .content { position:relative; z-index:1; }
+
+  /* ── HERO ── */
+  .hero {
+    background: linear-gradient(160deg, #12182a 0%, #0e1420 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 0 20px; position:relative; overflow:hidden;
+    animation: fadeDown 0.5s ease both;
+  }
+
+  .topbar {
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 20px 0 16px;
+  }
+
+  .logo-sm { display:flex; align-items:center; gap:8px; }
+  .logo-sm .ico { font-size:20px; }
+  .logo-sm span {
+    font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:2px;
+    background:linear-gradient(90deg,var(--accent),#fff);
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  }
+
+  .notif-btn {
+    width:40px; height:40px; border-radius:12px;
+    background:var(--surface); border:1px solid var(--border);
+    display:flex; align-items:center; justify-content:center;
+    font-size:18px; cursor:pointer; position:relative;
+  }
+
+  /* Tier card – empty state */
+  .tier-card {
+    background: linear-gradient(135deg, rgba(30,37,53,0.8) 0%, rgba(22,27,40,0.9) 100%);
+    border: 1px dashed var(--border);
+    border-radius: 20px; padding: 20px; margin-bottom: 20px;
+    position:relative; overflow:hidden;
+  }
+
+  .tier-top { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:16px; }
+
+  .user-info .greeting { font-size:12px; color:var(--muted); font-weight:300; }
+  .user-info .name {
+    font-family:'Bebas Neue',sans-serif; font-size:26px; letter-spacing:1px; line-height:1.1;
+    color: var(--muted);
+  }
+
+  .tier-badge-empty {
+    background:rgba(90,97,128,0.12); border:1px dashed var(--border);
+    border-radius:10px; padding:6px 12px;
+    font-size:12px; font-weight:500; color:var(--muted);
+  }
+
+  /* Skeleton shimmer */
+  @keyframes shimmer {
+    0%   { background-position: -400px 0; }
+    100% { background-position: 400px 0; }
+  }
+
+  .skeleton {
+    background: linear-gradient(90deg, var(--surface) 25%, #1c2235 50%, var(--surface) 75%);
+    background-size: 800px 100%;
+    animation: shimmer 1.8s infinite linear;
+    border-radius: 6px;
+  }
+
+  .skel-points { height: 44px; width: 120px; border-radius: 8px; margin-bottom: 14px; }
+  .skel-bar    { height: 6px;  width: 100%; border-radius: 3px; margin-bottom: 6px; }
+  .skel-label  { height: 10px; width: 60%;  border-radius: 4px; margin-bottom: 16px; }
+
+  .tier-stats { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-top:4px; }
+  .stat-item {
+    background:rgba(0,0,0,0.2); border-radius:10px; padding:10px; text-align:center;
+  }
+  .stat-val { font-family:'Bebas Neue',sans-serif; font-size:22px; color:var(--muted); }
+  .stat-key  { font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px; }
+
+  .plate-pill {
+    display:inline-flex; align-items:center; gap:8px;
+    background:rgba(0,0,0,0.2); border:1px dashed var(--border);
+    border-radius:8px; padding:5px 12px;
+    font-size:13px; color:var(--muted); margin-top:10px;
+    font-style: italic;
+  }
+
+  .welcome-hint {
+    background: rgba(0,200,255,0.05);
+    border: 1px solid rgba(0,200,255,0.12);
+    border-radius: 12px; padding: 12px 14px;
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 20px;
+  }
+  .welcome-hint .hint-ico { font-size: 20px; flex-shrink:0; }
+  .welcome-hint p { font-size: 12px; color: var(--muted); line-height: 1.5; }
+  .welcome-hint strong { color: var(--accent); }
+
+  /* ── SECTIONS ── */
+  .section { padding:20px 20px 0; animation:fadeUp 0.5s ease both; }
+  .section-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+  .section-title { font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:1.5px; color:var(--accent); }
+  .see-all { font-size:12px; color:var(--muted); text-decoration:none; }
+
+  /* Quick actions */
+  .quick-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
+  .quick-btn {
+    background:var(--card); border:1px solid var(--border);
+    border-radius:14px; padding:14px 8px;
+    display:flex; flex-direction:column; align-items:center; gap:6px;
+    cursor:pointer; transition:all 0.2s; text-decoration:none;
+  }
+  .quick-btn:hover { border-color:var(--accent); transform:translateY(-2px); }
+  .quick-btn:active { transform:scale(0.96); }
+  .quick-btn .qico { font-size:22px; }
+  .quick-btn .qlbl { font-size:10px; color:var(--muted); text-align:center; line-height:1.3; }
+  .quick-btn.primary {
+    background:linear-gradient(135deg,rgba(0,200,255,0.15),rgba(0,119,255,0.1));
+    border-color:rgba(0,200,255,0.3);
+  }
+  .quick-btn.primary .qlbl { color:var(--accent); }
+
+  /* Empty state card */
+  .empty-card {
+    background:var(--card); border:1px dashed var(--border);
+    border-radius:18px; padding:32px 24px;
+    text-align:center;
+  }
+  .empty-card .eico { font-size:40px; margin-bottom:12px; opacity:0.5; }
+  .empty-card h3 { font-size:15px; font-weight:600; color:var(--muted); margin-bottom:6px; }
+  .empty-card p  { font-size:12px; color:var(--muted); line-height:1.6; opacity:0.7; }
+
+  .btn-primary {
+    display:inline-block; margin-top:16px;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    border:none; border-radius:10px; padding:10px 24px;
+    font-family:'DM Sans',sans-serif; font-size:13px; font-weight:600;
+    color:#fff; cursor:pointer; text-decoration:none;
+  }
+
+  /* Promotions */
+  .promo-scroll {
+    display:flex; gap:12px; overflow-x:auto; padding:0 20px 4px;
+    margin:0 -20px; scrollbar-width:none;
+  }
+  .promo-scroll::-webkit-scrollbar { display:none; }
+  .promo-card {
+    min-width:220px; flex-shrink:0; border-radius:16px; padding:16px;
+    cursor:pointer; transition:transform 0.2s;
+  }
+  .promo-card:hover { transform:translateY(-2px); }
+  .promo-card.blue  { background:linear-gradient(135deg,#0e2040,#0a3060); border:1px solid rgba(0,150,255,0.3); }
+  .promo-card.gold  { background:linear-gradient(135deg,#2a1800,#3d2500); border:1px solid rgba(245,166,35,0.35); }
+  .promo-card.green { background:linear-gradient(135deg,#001a10,#002d1c); border:1px solid rgba(0,229,160,0.3); }
+  .promo-tag {
+    display:inline-block; font-size:10px; font-weight:700;
+    text-transform:uppercase; letter-spacing:1px;
+    padding:3px 8px; border-radius:5px; margin-bottom:8px;
+  }
+  .promo-card.blue  .promo-tag { background:rgba(0,150,255,0.2); color:var(--accent); }
+  .promo-card.gold  .promo-tag { background:rgba(245,166,35,0.2); color:var(--gold); }
+  .promo-card.green .promo-tag { background:rgba(0,229,160,0.15); color:var(--success); }
+  .promo-title   { font-weight:600; font-size:15px; line-height:1.3; margin-bottom:4px; }
+  .promo-sub     { font-size:11px; color:var(--muted); line-height:1.4; }
+  .promo-expire  { font-size:10px; color:var(--muted); margin-top:10px; }
+
+  /* Rewards */
+  .rewards-grid { display:flex; flex-direction:column; gap:10px; }
+  .reward-item {
+    background:var(--card); border:1px solid var(--border);
+    border-radius:14px; padding:14px;
+    display:flex; align-items:center; gap:12px;
+    opacity: 0.5;
+  }
+  .reward-ico  { font-size:26px; flex-shrink:0; }
+  .reward-name { font-size:14px; font-weight:500; }
+  .reward-pts  { font-size:12px; color:var(--gold); margin-top:2px; }
+  .btn-locked  {
+    background:transparent; border:1px solid var(--border);
+    border-radius:8px; padding:7px 14px;
+    font-family:'DM Sans',sans-serif; font-size:12px;
+    color:var(--muted); cursor:not-allowed; white-space:nowrap; flex-shrink:0;
+  }
+
+  /* Bottom nav */
+  .bottom-nav {
+    position:fixed; bottom:0; left:50%; transform:translateX(-50%);
+    width:100%; max-width:430px;
+    background:rgba(17,21,32,0.95); backdrop-filter:blur(20px);
+    border-top:1px solid var(--border);
+    display:flex; padding:10px 0 20px; z-index:100;
+  }
+  .nav-item {
+    flex:1; display:flex; flex-direction:column; align-items:center; gap:4px;
+    cursor:pointer; padding:6px 0;
+    color:var(--muted); font-size:10px; text-transform:uppercase; letter-spacing:0.5px;
+    font-weight:500; transition:color 0.2s; text-decoration:none;
+  }
+  .nav-item .nco { font-size:20px; transition:transform 0.2s; }
+  .nav-item.active { color:var(--accent); }
+  .nav-item.active .nco { transform:scale(1.15); }
+  .nav-center { flex:0 0 72px; display:flex; align-items:center; justify-content:center; margin-top:-20px; }
+  .nav-center-btn {
+    width:56px; height:56px; border-radius:18px;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    display:flex; align-items:center; justify-content:center;
+    font-size:24px; box-shadow:0 4px 20px rgba(0,200,255,0.35);
+    cursor:pointer; transition:transform 0.15s; text-decoration:none;
+  }
+  .nav-center-btn:hover { transform:scale(1.07); }
+
+  /* Toast */
+  .toast {
+    position:fixed; bottom:90px; left:50%; transform:translateX(-50%) translateY(20px);
+    background:var(--success); color:#000;
+    padding:10px 20px; border-radius:30px;
+    font-size:13px; font-weight:600;
+    opacity:0; transition:all 0.3s; z-index:200; white-space:nowrap;
+  }
+  .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+  @keyframes fadeDown { from{opacity:0;transform:translateY(-12px)} to{opacity:1;transform:none} }
+  @keyframes fadeUp   { from{opacity:0;transform:translateY(14px)}  to{opacity:1;transform:none} }
+</style>
+</head>
+<body>
+
+<div class="bg-glow"></div>
+
+<div class="content">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="topbar">
+      <div class="logo-sm"><span class="ico">🚗</span><span>AutoWash Pro</span></div>
+      <div class="notif-btn" onclick="showToast('No notifications yet')">🔔</div>
+    </div>
+
+    <div class="tier-card">
+      <div class="tier-top">
+        <div class="user-info">
+          <div class="greeting">Welcome 👋</div>
+          <div class="name">— New Member —</div>
+        </div>
+        <div class="tier-badge-empty">No Tier Yet</div>
+      </div>
+
+      <!-- Skeleton points -->
+      <div class="skeleton skel-points"></div>
+      <div class="skeleton skel-bar"></div>
+      <div class="skeleton skel-label"></div>
+
+      <div class="tier-stats">
+        <div class="stat-item">
+          <div class="stat-val">0</div>
+          <div class="stat-key">Washes</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-val">0</div>
+          <div class="stat-key">Spent</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-val">7<span style="font-size:12px">d</span></div>
+          <div class="stat-key">Book Ahead</div>
+        </div>
+      </div>
+
+      <div class="plate-pill">🚗 No vehicle linked yet</div>
+    </div>
+
+    <!-- Hint banner -->
+    <div class="welcome-hint">
+      <div class="hint-ico">💡</div>
+      <p>Complete your profile and book your <strong>first wash</strong> to activate your Member tier and start earning loyalty points!</p>
+    </div>
+  </div>
+
+  <!-- QUICK ACTIONS -->
+  <div class="section" style="animation-delay:0.1s">
+    <div class="section-head">
+      <div class="section-title">Quick Actions</div>
+    </div>
+    <div class="quick-grid">
+      <a class="quick-btn primary" href="#booking">
+        <div class="qico">📅</div><div class="qlbl">Book Wash</div>
+      </a>
+      <a class="quick-btn" href="#rewards">
+        <div class="qico">🎁</div><div class="qlbl">Redeem</div>
+      </a>
+      <a class="quick-btn" href="#history">
+        <div class="qico">📋</div><div class="qlbl">History</div>
+      </a>
+      <a class="quick-btn" href="#" onclick="showToast('Opening support chat...')">
+        <div class="qico">💬</div><div class="qlbl">Support</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- ACTIVE BOOKING – empty -->
+  <div class="section" id="booking" style="animation-delay:0.15s">
+    <div class="section-head">
+      <div class="section-title">Active Booking</div>
+    </div>
+
+    <div class="empty-card">
+      <div class="eico">📅</div>
+      <h3>No active bookings</h3>
+      <p>You haven't booked a car wash yet.<br>Schedule your first appointment now!</p>
+      <a href="#" class="btn-primary" onclick="showToast('Booking page coming soon...')">Book a Wash</a>
+    </div>
+  </div>
+
+  <!-- PROMOTIONS -->
+  <div class="section" style="animation-delay:0.2s">
+    <div class="section-head">
+      <div class="section-title">Current Offers</div>
+      <a href="#" class="see-all">See more →</a>
+    </div>
+  </div>
+
+  <div class="promo-scroll" style="padding:0 20px 4px">
+    <div class="promo-card blue" onclick="showToast('Copied code: WELCOME10')">
+      <div class="promo-tag">New Member</div>
+      <div class="promo-title">10% off your first wash</div>
+      <div class="promo-sub">Register and complete your first booking to apply</div>
+      <div class="promo-expire">⏳ Expires: Jun 30, 2026</div>
+    </div>
+    <div class="promo-card gold" onclick="showToast('Double points promo noted!')">
+      <div class="promo-tag">Bonus Points</div>
+      <div class="promo-title">2x Points on Weekends</div>
+      <div class="promo-sub">Book Sat–Sun and earn double loyalty points</div>
+      <div class="promo-expire">⏳ Expires: May 25, 2026</div>
+    </div>
+    <div class="promo-card green" onclick="showToast('Share your referral code with friends')">
+      <div class="promo-tag">Referral</div>
+      <div class="promo-title">Earn 200 pts per referral</div>
+      <div class="promo-sub">Friend signs up & completes their first wash</div>
+      <div class="promo-expire">✅ No expiry</div>
+    </div>
+  </div>
+
+  <!-- WASH HISTORY – empty -->
+  <div class="section" id="history" style="animation-delay:0.25s">
+    <div class="section-head">
+      <div class="section-title">Wash History</div>
+    </div>
+
+    <div class="empty-card">
+      <div class="eico">🧽</div>
+      <h3>No wash history yet</h3>
+      <p>Your completed washes and earned points<br>will appear here after your first visit.</p>
+    </div>
+  </div>
+
+  <!-- REDEEM REWARDS – locked -->
+  <div class="section" id="rewards" style="animation-delay:0.3s;margin-bottom:10px">
+    <div class="section-head">
+      <div class="section-title">Redeem Points</div>
+      <span style="font-size:12px;color:var(--muted)">0 pts available</span>
+    </div>
+
+    <div class="empty-card" style="margin-bottom:12px">
+      <div class="eico">🎁</div>
+      <h3>No points yet</h3>
+      <p>Earn points by booking washes.<br>Redeem them for free services and discounts.</p>
+    </div>
+
+    <!-- Locked reward previews -->
+    <div class="rewards-grid">
+      <div class="reward-item">
+        <div class="reward-ico">🧽</div>
+        <div style="flex:1">
+          <div class="reward-name">1 Free Basic Wash</div>
+          <div class="reward-pts">500 points required</div>
+        </div>
+        <button class="btn-locked" disabled>Locked</button>
+      </div>
+      <div class="reward-item">
+        <div class="reward-ico">✨</div>
+        <div style="flex:1">
+          <div class="reward-name">Car Wax / Polish</div>
+          <div class="reward-pts">300 points required</div>
+        </div>
+        <button class="btn-locked" disabled>Locked</button>
+      </div>
+      <div class="reward-item">
+        <div class="reward-ico">💸</div>
+        <div style="flex:1">
+          <div class="reward-name">50,000 VND Discount</div>
+          <div class="reward-pts">200 points required</div>
+        </div>
+        <button class="btn-locked" disabled>Locked</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end .content -->
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+  <a class="nav-item active" href="#">
+    <div class="nco">🏠</div><div>Home</div>
+  </a>
+  <a class="nav-item" href="#history">
+    <div class="nco">📋</div><div>History</div>
+  </a>
+  <div class="nav-center">
+    <a class="nav-center-btn" href="#booking">📅</a>
+  </div>
+  <a class="nav-item" href="#rewards">
+    <div class="nco">🎁</div><div>Rewards</div>
+  </a>
+  <a class="nav-item" href="#">
+    <div class="nco">👤</div><div>Profile</div>
+  </a>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  let toastTimer;
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2400);
+  }
+</script>
+</body>
+</html>
