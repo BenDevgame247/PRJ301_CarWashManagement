@@ -1,20 +1,19 @@
-<%-- 
-    Document   : index
-    Created on : May 14, 2026, 4:35:13 PM
-    Author     : MY PC
---%>
-
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Car Wash Management</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>AutoWash Pro</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     </head>
-    <body>
-        <h1>Car Wash Management</h1>
-        <p>
-            <a href="${pageContext.request.contextPath}/db-test">Test database connection</a>
-        </p>
+    <body class="bg-light">
+        <main class="container text-center mt-5">
+            <h1 class="mb-3">AutoWash Pro</h1>
+            <p class="text-muted mb-4">Smart Car Wash Management System</p>
+
+            <a href="<%= request.getContextPath() %>/login" class="btn btn-primary me-2">Login</a>
+            <a href="<%= request.getContextPath() %>/register" class="btn btn-outline-primary">Register</a>
+        </main>
     </body>
 </html>
