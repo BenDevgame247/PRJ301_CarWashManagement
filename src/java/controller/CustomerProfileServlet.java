@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-@WebServlet(name = "CustomerProfileServlet", urlPatterns = {"/customer/profile"})
+@WebServlet(name = "CustomerProfileServlet", urlPatterns = {"/profile"})
 public class CustomerProfileServlet extends HttpServlet {
 
     private final CustomerProfileDAO customerProfileDAO = new CustomerProfileDAO();
@@ -38,6 +38,6 @@ public class CustomerProfileServlet extends HttpServlet {
             request.setAttribute("profile", profile);
         }
 
-        request.getRequestDispatcher("/customer/profile.jsp").forward(request, response);
+        request.getRequestDispatcher("/profile.jsp").forward(request, response);
     }
 }
