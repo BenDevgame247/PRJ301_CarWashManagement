@@ -142,3 +142,7 @@ CREATE TABLE RewardRedemptions(
 	CONSTRAINT FK_RewardRedemptions_Rewards FOREIGN KEY (reward_id) REFERENCES Rewards(reward_id),
 	CONSTRAINT FK_RewardRedemption_Bookings FOREIGN KEY (booking_id) REFERENCES Bookings(booking_id)
 );
+
+-- Thêm cot
+ALTER TABLE Users
+ADD nick_name NVARCHAR(50) NULL;

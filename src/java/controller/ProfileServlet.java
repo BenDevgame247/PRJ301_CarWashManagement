@@ -1,7 +1,7 @@
 package controller;
 
-import dao.CustomerProfileDAO;
-import dto.CustomerProfileDTO;
+import dao.ProfileDAO;
+import dto.ProfileDTO;
 import dto.UserDTO;
 import java.io.IOException;
 import javax.servlet.ServletException;
@@ -11,10 +11,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-@WebServlet(name = "CustomerProfileServlet", urlPatterns = {"/profile"})
-public class CustomerProfileServlet extends HttpServlet {
+@WebServlet(name = "ProfileServlet", urlPatterns = {"/profile"})
+public class ProfileServlet extends HttpServlet {
 
-    private final CustomerProfileDAO customerProfileDAO = new CustomerProfileDAO();
+    private final ProfileDAO profileDAO = new ProfileDAO();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -31,7 +31,7 @@ public class CustomerProfileServlet extends HttpServlet {
             return;
         }
 
-        CustomerProfileDTO profile = customerProfileDAO.getProfileByUserId(user.getUserId());
+        ProfileDTO profile = profileDAO.getProfileByUserId(user.getUserId());
         if (profile == null) {
             request.setAttribute("profileError", "Customer profile data was not found.");
         } else {
