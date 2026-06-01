@@ -55,7 +55,7 @@ CREATE TABLE LoyaltyAccounts(
 	current_points                  INT			NOT NULL DEFAULT 0,
 	lifetime_points                 INT			NOT NULL DEFAULT 0,
 	last_review_date                DATE,
-	updated_at			DATETIME		NOT NULL DEFAULT GETDATE()
+	updated_at			DATETIME		NOT NULL DEFAULT GETDATE(),
 
 	CONSTRAINT FK_LoyaltyAccounts_Customers FOREIGN KEY (customer_id) REFERENCES Customers(customer_id),
 	CONSTRAINT FK_LoyaltyAccounts_LoyaltyTiers FOREIGN KEY (tier_id) REFERENCES LoyaltyTiers(tier_id)
@@ -89,7 +89,7 @@ CREATE TABLE Promotions(
 	discount_amount                 DECIMAL(18,2)		NOT NULL DEFAULT 0,
 	start_date			DATE			NOT NULL,
 	end_date			DATE			NOT NULL,
-	status				VARCHAR(20)		NOT NULL DEFAULT 'ACTIVE'
+	status				VARCHAR(20)		NOT NULL DEFAULT 'ACTIVE',
 
 	CONSTRAINT FK_Promotions_LoyaltyTiers FOREIGN KEY (target_tier_id) REFERENCES LoyaltyTiers(tier_id)
 );
@@ -142,3 +142,18 @@ CREATE TABLE RewardRedemptions(
 	CONSTRAINT FK_RewardRedemptions_Rewards FOREIGN KEY (reward_id) REFERENCES Rewards(reward_id),
 	CONSTRAINT FK_RewardRedemption_Bookings FOREIGN KEY (booking_id) REFERENCES Bookings(booking_id)
 );
+
+INSERT INTO LoyaltyTiers
+(tier_name, min_washes, min_spent, point_rate, discount_percent, booking_days_ahead, description)
+VALUES
+('Member', 0, 0, 1.00, 0, 7, N'Basic customer tier'),
+('Silver', 5, 2000000, 1.10, 5, 10, N'Silver loyalty tier'),
+('Gold', 15, 6000000, 1.20, 10, 12, N'Gold loyalty tier'),
+('Platinum', 30, 15000000, 1.30, 15, 14, N'Platinum loyalty tier');
+
+INSERT INTO Rewards
+(reward_name, required_points, discount_amount, reward_type, description, status)
+VALUES
+(N'Free Wax', 300, 0, 'SERVICE', N'Redeem 300 points for free wax service', 'ACTIVE'),
+(N'50,000 VND Discount', 500, 50000, 'DISCOUNT', N'Redeem 500 points for 50,000 VND discount', 'ACTIVE'),
+(N'Free Basic Wash', 1000, 0, 'SERVICE', N'Redeem 1000 points for one free basic wash', 'ACTIVE');

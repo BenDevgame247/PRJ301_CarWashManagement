@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
 /**
  *
  * @author MY PC
@@ -48,7 +49,7 @@ public class LoginServlet extends HttpServlet {
             request.getRequestDispatcher("/login.jsp").forward(request, response);
             return;
         }
- 
+
         UserDTO user = userDAO.login(email.trim(), password.trim());
 
         if (user == null) {
@@ -64,7 +65,7 @@ public class LoginServlet extends HttpServlet {
         if ("CUSTOMER".equalsIgnoreCase(user.getRole())) {
             response.sendRedirect(request.getContextPath() + "/profile");
         } else if ("ADMIN".equalsIgnoreCase(user.getRole())) {
-            response.sendRedirect(request.getContextPath() + "/admin/dashboard");
+            response.sendRedirect(request.getContextPath() + "/");
         } else {
             response.sendRedirect(request.getContextPath() + "/");
         }
