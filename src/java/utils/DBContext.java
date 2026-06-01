@@ -8,8 +8,8 @@ public class DBContext {
 
     private static final String SERVER = getConfig("DB_SERVER", "localhost:1433");
     private static final String DATABASE = getConfig("DB_NAME", "PRJ301_CarWashManagement");
-    private static final String USER = getConfig("DB_USER", "carwash_management");
-    private static final String PASSWORD = getConfig("DB_PASSWORD", "group7");
+    private static final String USER = getConfig("DB_USER", "sa");
+    private static final String PASSWORD = getConfig("DB_PASSWORD", "12345");
 
     private static final String URL = "jdbc:sqlserver://" + SERVER
             + ";databaseName=" + DATABASE
